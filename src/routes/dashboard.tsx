@@ -176,21 +176,41 @@ function CreateDialog({ onCreated }: { onCreated: () => void }) {
   const [category, setCategory] = useState<Category>("cleaning");
   const [address, setAddress] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  function pickImage(file: File | null) {
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : null);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
     setBusy(true);
+
+    let image_url: string | null = null;
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("service-images")
+        .upload(path, imageFile, { contentType: imageFile.type });
+      if (upErr) { setBusy(false); return toast.error(upErr.message); }
+      image_url = supabase.storage.from("service-images").getPublicUrl(path).data.publicUrl;
+    }
+
     const { error } = await supabase.from("service_requests").insert({
       user_id: user.id,
-      title, description, category, address,
+      title, description, category, address, image_url,
       preferred_time: preferredTime ? new Date(preferredTime).toISOString() : null,
     });
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Request created");
     setTitle(""); setDescription(""); setAddress(""); setPreferredTime(""); setCategory("cleaning");
+    setImageFile(null); setImagePreview(null);
     onCreated();
   }
 
