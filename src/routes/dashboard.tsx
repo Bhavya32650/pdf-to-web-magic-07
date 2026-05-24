@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Home, Plus, Trash2, LogOut, Search, MapPin, Clock } from "lucide-react";
+import { Home, Plus, Trash2, LogOut, Search, MapPin, Clock, ImagePlus, X } from "lucide-react";
 
 type SR = Tables<"service_requests">;
 type Category = Enums<"service_category">;
@@ -136,6 +136,9 @@ function Dashboard() {
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1.5">{r.description}</p>
+                    {r.image_url && (
+                      <img src={r.image_url} alt={r.title} className="mt-3 rounded-lg max-h-48 object-cover border" />
+                    )}
                     <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><MapPin className="size-3.5" /> {r.address}</span>
                       {r.preferred_time && (
@@ -173,21 +176,41 @@ function CreateDialog({ onCreated }: { onCreated: () => void }) {
   const [category, setCategory] = useState<Category>("cleaning");
   const [address, setAddress] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  function pickImage(file: File | null) {
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : null);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
     setBusy(true);
+
+    let image_url: string | null = null;
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("service-images")
+        .upload(path, imageFile, { contentType: imageFile.type });
+      if (upErr) { setBusy(false); return toast.error(upErr.message); }
+      image_url = supabase.storage.from("service-images").getPublicUrl(path).data.publicUrl;
+    }
+
     const { error } = await supabase.from("service_requests").insert({
       user_id: user.id,
-      title, description, category, address,
+      title, description, category, address, image_url,
       preferred_time: preferredTime ? new Date(preferredTime).toISOString() : null,
     });
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Request created");
     setTitle(""); setDescription(""); setAddress(""); setPreferredTime(""); setCategory("cleaning");
+    setImageFile(null); setImagePreview(null);
     onCreated();
   }
 
@@ -223,6 +246,32 @@ function CreateDialog({ onCreated }: { onCreated: () => void }) {
         <div className="space-y-1.5">
           <Label htmlFor="addr">Address</Label>
           <Input id="addr" value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="221B Baker Street" />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="img">Photo (optional)</Label>
+          {imagePreview ? (
+            <div className="relative inline-block">
+              <img src={imagePreview} alt="preview" className="rounded-lg max-h-40 border" />
+              <button
+                type="button"
+                onClick={() => pickImage(null)}
+                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ) : (
+            <label htmlFor="img" className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed p-4 text-sm text-muted-foreground hover:bg-muted/50">
+              <ImagePlus className="size-4" /> Click to upload an image
+            </label>
+          )}
+          <Input
+            id="img"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => pickImage(e.target.files?.[0] ?? null)}
+          />
         </div>
         <DialogFooter>
           <Button type="submit" disabled={busy}>{busy ? "Creating…" : "Create request"}</Button>
