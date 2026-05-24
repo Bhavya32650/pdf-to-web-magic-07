@@ -136,6 +136,9 @@ function Dashboard() {
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1.5">{r.description}</p>
+                    {r.image_url && (
+                      <img src={r.image_url} alt={r.title} className="mt-3 rounded-lg max-h-48 object-cover border" />
+                    )}
                     <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><MapPin className="size-3.5" /> {r.address}</span>
                       {r.preferred_time && (
