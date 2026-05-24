@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Home, Plus, Trash2, LogOut, Search, MapPin, Clock } from "lucide-react";
+import { Home, Plus, Trash2, LogOut, Search, MapPin, Clock, ImagePlus, X } from "lucide-react";
 
 type SR = Tables<"service_requests">;
 type Category = Enums<"service_category">;
