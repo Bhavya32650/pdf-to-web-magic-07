@@ -247,6 +247,32 @@ function CreateDialog({ onCreated }: { onCreated: () => void }) {
           <Label htmlFor="addr">Address</Label>
           <Input id="addr" value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="221B Baker Street" />
         </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="img">Photo (optional)</Label>
+          {imagePreview ? (
+            <div className="relative inline-block">
+              <img src={imagePreview} alt="preview" className="rounded-lg max-h-40 border" />
+              <button
+                type="button"
+                onClick={() => pickImage(null)}
+                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ) : (
+            <label htmlFor="img" className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed p-4 text-sm text-muted-foreground hover:bg-muted/50">
+              <ImagePlus className="size-4" /> Click to upload an image
+            </label>
+          )}
+          <Input
+            id="img"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => pickImage(e.target.files?.[0] ?? null)}
+          />
+        </div>
         <DialogFooter>
           <Button type="submit" disabled={busy}>{busy ? "Creating…" : "Create request"}</Button>
         </DialogFooter>
