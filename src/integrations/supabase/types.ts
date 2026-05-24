@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      service_requests: {
+        Row: {
+          address: string
+          category: Database["public"]["Enums"]["service_category"]
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          preferred_time: string | null
+          status: Database["public"]["Enums"]["service_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          category?: Database["public"]["Enums"]["service_category"]
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          preferred_time?: string | null
+          status?: Database["public"]["Enums"]["service_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          category?: Database["public"]["Enums"]["service_category"]
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          preferred_time?: string | null
+          status?: Database["public"]["Enums"]["service_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +64,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      service_category:
+        | "cleaning"
+        | "plumbing"
+        | "electrical"
+        | "appliance"
+        | "painting"
+        | "pest_control"
+        | "other"
+      service_status: "pending" | "in_progress" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +199,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      service_category: [
+        "cleaning",
+        "plumbing",
+        "electrical",
+        "appliance",
+        "painting",
+        "pest_control",
+        "other",
+      ],
+      service_status: ["pending", "in_progress", "completed", "cancelled"],
+    },
   },
 } as const
