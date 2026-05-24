@@ -73,14 +73,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Service request app" },
+      { name: "description", content: "Converts PDF documents into interactive websites, automatically extracting content and structure." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Service request app" },
+      { property: "og:description", content: "Converts PDF documents into interactive websites, automatically extracting content and structure." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Service request app" },
+      { name: "twitter:description", content: "Converts PDF documents into interactive websites, automatically extracting content and structure." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9f025020-950b-40a5-b352-b6808b6639a8/id-preview-d53bb8e6--c9c3a067-16f7-4d48-a7d5-52be8b55fdc6.lovable.app-1779615062237.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9f025020-950b-40a5-b352-b6808b6639a8/id-preview-d53bb8e6--c9c3a067-16f7-4d48-a7d5-52be8b55fdc6.lovable.app-1779615062237.png" },
     ],
     links: [
       {
