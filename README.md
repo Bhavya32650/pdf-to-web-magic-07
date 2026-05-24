@@ -63,8 +63,6 @@ https://youtu.be/OIGiJcjOMec
 
 ## Deployment
 - GitHub
-- Vercel
-
 ---
 
 # Project Structure
